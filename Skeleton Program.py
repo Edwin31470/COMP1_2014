@@ -201,7 +201,7 @@ def UpdateRecentScores(RecentScores, Score):
       Count = NO_OF_RECENT_SCORES
     RecentScores[Count].Name = PlayerName
     RecentScores[Count].Score = Score
-    RecentScores[Count].Date = time.strftime("%d.%m/%Y")
+    RecentScores[Count].Date = time.strftime("%d/%m/%Y")
 
 def PlayGame(Deck, RecentScores):
   LastCard = TCard()
