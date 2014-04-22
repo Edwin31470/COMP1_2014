@@ -10,6 +10,7 @@ import random
 import time
 
 NO_OF_RECENT_SCORES = 3
+ACE_HIGH = False
 
 class TCard():
   def __init__(self):
@@ -28,7 +29,7 @@ Choice = ''
 
 def GetRank(RankNo):
   Rank = ''
-  if RankNo == 1:
+  if RankNo == 1: 
     Rank = 'Ace'
   elif RankNo == 2:
     Rank = 'Two'
@@ -76,6 +77,16 @@ def DisplayMenu():
   print('2. Play game (without shuffle)')
   print('3. Display recent scores')
   print('4. Reset recent scores')
+  print("5. Options Menu")
+  print()
+  print('Select an option from the menu (or enter q to quit): ', end='')
+
+def DisplayOptions():
+  print()
+  print("OPTIONS MENU")
+  print()
+  print("1. Ace value")
+  print("2. Placeholder")
   print()
   print('Select an option from the menu (or enter q to quit): ', end='')
 
@@ -85,6 +96,29 @@ def GetMenuChoice():
   print()
   return Choice
 
+def GetOptionsChoice():
+  Choice = input().lower()
+  Choice = Choice[0]
+  print()
+  return Choice
+
+def SetOptions(OptionChoice):
+  if OptionChoice == 1:
+    ACE_HIGH = SetAceHighLow()
+  elif OptionChoice == 2:
+    pass
+  
+
+
+def SetAceHighLow():
+  aceHL = input("Do you want ace to be high or low?(H/L): "),upper
+  aceHigh = None
+  if aceHL == "H":
+    aceHigh = True
+  elif aceHL == "L":
+    aceHigh = False
+  return aceHigh
+  
 def LoadDeck(Deck):
   CurrentFile = open('deck.txt', 'r')
   Count = 1
@@ -251,3 +285,5 @@ if __name__ == '__main__':
       DisplayRecentScores(RecentScores)
     elif Choice == '4':
       ResetRecentScores(RecentScores)
+    elif Choice == "5":
+      pass

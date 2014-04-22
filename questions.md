@@ -8,7 +8,7 @@
 
 ##Questions for task 3(b)
 
-1. DisplayRecentScores()
+1. UpdateRecentScores()
 
 ##Questions for task 5
 
@@ -27,3 +27,9 @@
    Follower: Stores data from an old variable
    Temporary: Sores temporary data
 2.
+
+##Questions for task 6
+
+1. GetPlayerName()
+2. DisplayMenu()
+3. GetRank()
