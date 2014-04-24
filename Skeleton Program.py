@@ -4,18 +4,24 @@
 # developed in the Python 3.2 programming environment
 # version 2 edited 06/03/2014
 
+
 ######test change#############
+
 
 import random
 import time
 
+import pdb
+
 NO_OF_RECENT_SCORES = 3
 ACE_HIGH = False
+
 
 class TCard():
   def __init__(self):
     self.Suit = 0
     self.Rank = 0
+
 
 class TRecentScore():
   def __init__(self):
@@ -23,9 +29,11 @@ class TRecentScore():
     self.Score = 0
     self.Date = None
 
+
 Deck = [None]
 RecentScores = [None]
 Choice = ''
+
 
 def GetRank(RankNo):
   Rank = ''
@@ -55,7 +63,10 @@ def GetRank(RankNo):
     Rank = 'Queen'
   elif RankNo == 13:
     Rank = 'King'
+  elif RankNo == 14:
+    Rank = 'Ace High'
   return Rank
+
 
 def GetSuit(SuitNo):
   Suit = ''
@@ -69,6 +80,7 @@ def GetSuit(SuitNo):
     Suit = 'Spades'
   return Suit
 
+
 def DisplayMenu():
   print()
   print('MAIN MENU')
@@ -81,6 +93,7 @@ def DisplayMenu():
   print()
   print('Select an option from the menu (or enter q to quit): ', end='')
 
+
 def DisplayOptions():
   print()
   print("OPTIONS MENU")
@@ -90,17 +103,20 @@ def DisplayOptions():
   print()
   print('Select an option from the menu (or enter q to quit): ', end='')
 
+
 def GetMenuChoice():
   Choice = input().lower()
   Choice = Choice[0]
   print()
   return Choice
 
+
 def GetOptionsChoice():
   Choice = input().lower()
   Choice = Choice[0]
   print()
   return Choice
+
 
 def SetOptions(OptionChoice):
   if OptionChoice == 1:
@@ -110,7 +126,10 @@ def SetOptions(OptionChoice):
   
 
 
+
+
 def SetAceHighLow():
+  global ACE_HIGH
   aceHL = input("Do you want ace to be high or low?(H/L): "),upper
   aceHigh = None
   if aceHL == "H":
@@ -119,6 +138,7 @@ def SetAceHighLow():
     aceHigh = False
   return aceHigh
   
+
 def LoadDeck(Deck):
   CurrentFile = open('deck.txt', 'r')
   Count = 1
@@ -129,6 +149,8 @@ def LoadDeck(Deck):
       break
     Deck[Count].Suit = int(LineFromFile)
     LineFromFile = CurrentFile.readline()
+##    if LineFromFile == 1 and ACE_HIGH:
+##      LineFromFile = 14
     Deck[Count].Rank = int(LineFromFile)
     Count = Count + 1
  
@@ -145,10 +167,12 @@ def ShuffleDeck(Deck):
     Deck[Position2].Rank = SwapSpace.Rank
     Deck[Position2].Suit = SwapSpace.Suit
 
+
 def DisplayCard(ThisCard):
   print()
   print('Card is the', GetRank(ThisCard.Rank), 'of', GetSuit(ThisCard.Suit))
   print()
+
 
 def GetCard(ThisCard, Deck, NoOfCardsTurnedOver):
   ThisCard.Rank = Deck[1].Rank
@@ -159,11 +183,13 @@ def GetCard(ThisCard, Deck, NoOfCardsTurnedOver):
   Deck[52 - NoOfCardsTurnedOver].Suit = 0
   Deck[52 - NoOfCardsTurnedOver].Rank = 0
 
+
 def IsNextCardHigher(LastCard, NextCard):
   Higher = False
   if NextCard.Rank > LastCard.Rank:
     Higher = True
   return Higher
+
 
 def GetPlayerName():
   print()
@@ -177,11 +203,13 @@ def GetPlayerName():
   print()
   return PlayerName
 
+
 def GetChoiceFromUser():
   Choice = input('Do you think the next card will be higher than the last card (enter y or n)? ').lower()
   Choice = Choice[0]
   print(Choice)
   return Choice
+
 
 def DisplayEndOfGameMessage(Score):
   print()
@@ -191,17 +219,20 @@ def DisplayEndOfGameMessage(Score):
     print('WOW! You completed a perfect game.')
   print()
 
+
 def DisplayCorrectGuessMessage(Score):
   print()
   print('Well done! You guessed correctly.')
   print('Your score is now ', Score, '.', sep='')
   print()
 
+
 def ResetRecentScores(RecentScores):
   for Count in range(1, NO_OF_RECENT_SCORES + 1):
     RecentScores[Count].Name = ''
     RecentScores[Count].Score = 0
     RecentScores[Count].Date = None
+
 
 def DisplayRecentScores(RecentScores):
   print()
@@ -214,6 +245,7 @@ def DisplayRecentScores(RecentScores):
   print('Press the Enter key to return to the main menu')
   input()
   print()
+
 
 def UpdateRecentScores(RecentScores, Score):
   addScore = input("Would you like your score to be added to the highscores? (y or n): ").lower()
@@ -236,6 +268,7 @@ def UpdateRecentScores(RecentScores, Score):
     RecentScores[Count].Name = PlayerName
     RecentScores[Count].Score = Score
     RecentScores[Count].Date = time.strftime("%d/%m/%Y")
+
 
 def PlayGame(Deck, RecentScores):
   LastCard = TCard()
@@ -286,4 +319,9 @@ if __name__ == '__main__':
     elif Choice == '4':
       ResetRecentScores(RecentScores)
     elif Choice == "5":
-      pass
+      DisplayOptions()
+      OptionChoice = GetOptionChoice()
+      ACE_HIGH = SetOptions(OptionChoice)
+      if ACE_HIGH == True:
+        print("True")
+      print(ACE_HIGH)
