@@ -10,7 +10,6 @@
 
 import random
 import time
-
 import pdb
 
 NO_OF_RECENT_SCORES = 3
@@ -37,7 +36,7 @@ Choice = ''
 
 def GetRank(RankNo):
   Rank = ''
-  if RankNo == 1: 
+  if RankNo in [1,14]: 
     Rank = 'Ace'
   elif RankNo == 2:
     Rank = 'Two'
@@ -63,9 +62,8 @@ def GetRank(RankNo):
     Rank = 'Queen'
   elif RankNo == 13:
     Rank = 'King'
-  elif RankNo == 14:
-    Rank = 'Ace High'
   return Rank
+
 
 
 def GetSuit(SuitNo):
@@ -111,7 +109,7 @@ def GetMenuChoice():
   return Choice
 
 
-def GetOptionsChoice():
+def GetOptionChoice():
   Choice = input().lower()
   Choice = Choice[0]
   print()
@@ -119,18 +117,15 @@ def GetOptionsChoice():
 
 
 def SetOptions(OptionChoice):
-  if OptionChoice == 1:
+  global ACE_HIGH
+  if OptionChoice == "1":
     ACE_HIGH = SetAceHighLow()
-  elif OptionChoice == 2:
+  elif OptionChoice == "2":
     pass
   
-
-
-
-
 def SetAceHighLow():
   global ACE_HIGH
-  aceHL = input("Do you want ace to be high or low?(H/L): "),upper
+  aceHL = input("Do you want ace to be high or low?(H/L): ").upper()
   aceHigh = None
   if aceHL == "H":
     aceHigh = True
@@ -140,6 +135,7 @@ def SetAceHighLow():
   
 
 def LoadDeck(Deck):
+  global ACE_HIGH
   CurrentFile = open('deck.txt', 'r')
   Count = 1
   while True:
@@ -149,9 +145,9 @@ def LoadDeck(Deck):
       break
     Deck[Count].Suit = int(LineFromFile)
     LineFromFile = CurrentFile.readline()
-##    if LineFromFile == 1 and ACE_HIGH:
-##      LineFromFile = 14
     Deck[Count].Rank = int(LineFromFile)
+    if ACE_HIGH == True and Deck[Count].Rank == 1:
+      Deck[Count].Rank = 14
     Count = Count + 1
  
 def ShuffleDeck(Deck):
@@ -233,8 +229,22 @@ def ResetRecentScores(RecentScores):
     RecentScores[Count].Score = 0
     RecentScores[Count].Date = None
 
+def BubbleSort(RecentScores):
+  finished = False
+  Count = 0
+  while not finished:
+    finished = True
+    if RecentScores[Count].Score < RecentScores[Count+1].Score:
+      finished = False
+      temp = RecentScores[Count].Score
+      RecentScores[Count].Score = RecentScores[Count+1].Score
+      RecentScores[Count+1].Score = temp
+      Count = 0
+    else:
+      Count = Count + 1
 
 def DisplayRecentScores(RecentScores):
+  BubbleSort(RecentScores)
   print()
   print('Recent Scores: ')
   print()
@@ -315,13 +325,16 @@ if __name__ == '__main__':
       LoadDeck(Deck)
       PlayGame(Deck, RecentScores)
     elif Choice == '3':
+      print(RecentScores[2].Score)
       DisplayRecentScores(RecentScores)
     elif Choice == '4':
       ResetRecentScores(RecentScores)
     elif Choice == "5":
       DisplayOptions()
       OptionChoice = GetOptionChoice()
-      ACE_HIGH = SetOptions(OptionChoice)
+      SetOptions(OptionChoice)
       if ACE_HIGH == True:
         print("True")
+      elif ACE_HIGH == False:
+        print("False")
       print(ACE_HIGH)
