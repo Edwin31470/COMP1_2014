@@ -11,6 +11,7 @@
 import random
 import time
 import pdb
+import pickle
 
 NO_OF_RECENT_SCORES = 3
 ACE_HIGH = False
@@ -24,7 +25,7 @@ class TCard():
 
 class TRecentScore():
   def __init__(self):
-    self.Name = ''
+    self.Name = 'PlayerName'
     self.Score = 0
     self.Date = None
 
@@ -65,7 +66,6 @@ def GetRank(RankNo):
   return Rank
 
 
-
 def GetSuit(SuitNo):
   Suit = ''
   if SuitNo == 1:
@@ -79,6 +79,17 @@ def GetSuit(SuitNo):
   return Suit
 
 
+def SaveScores(RecentScores):
+  #with open("save_scores.txt",mode="w",encoding="utf-8") as my_file:
+    file = open("save_scores.txt","w")
+    file.write(RecentScores)
+
+
+def LoadScores():
+  with open("save_scores.txt", mode="rb") as my_file:
+    TRecentScores = pickle.load(my_file)
+    print(TRecentScores)
+  
 def DisplayMenu():
   print()
   print('MAIN MENU')
@@ -88,6 +99,8 @@ def DisplayMenu():
   print('3. Display recent scores')
   print('4. Reset recent scores')
   print("5. Options Menu")
+  print("6. Save Scores")
+  print("7. Load Scores")
   print()
   print('Select an option from the menu (or enter q to quit): ', end='')
 
@@ -236,21 +249,16 @@ def BubbleSortScores(RecentScores):
   while swapMade:
     swapMade = False
     list_length = list_length - 1
-    for count in range(1,list_length+1):
+    for Count in range(1,list_length):
       if RecentScores[Count].Score < RecentScores[Count+1].Score:
-        finished = False
         temp = RecentScores[Count]
         RecentScores[Count] = RecentScores[Count+1]
         RecentScores[Count+1] = temp
+        swapMade = True
 
 
 def DisplayRecentScores(RecentScores):
-  #if RecentScores[1].Score == 0:
-  #  print("Changing scores")
-  #  for count in range(1,4):
-  #    print("Changed score")
-  #    RecentScores[count].Scores = count
-  #BubbleSortScores(RecentScores)
+  BubbleSortScores(RecentScores)
   print()
   print('Recent Scores: ')
   print()
@@ -343,4 +351,7 @@ if __name__ == '__main__':
         print("True")
       elif ACE_HIGH == False:
         print("False")
-      print(ACE_HIGH)
+    elif Choice == "6":
+       SaveScores(RecentScores)
+    elif Choice == "7":
+       LoadScores()
