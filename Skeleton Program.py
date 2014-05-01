@@ -16,7 +16,8 @@ import pickle
 
 NO_OF_RECENT_SCORES = 10
 ACE_HIGH = False
-CARD_SAME_ENDS = False
+CARD_SAME_SKIP = False
+NO_OF_LIVES = 3
 
 
 class TCard():
@@ -30,6 +31,13 @@ class TRecentScore():
     self.Name = ''
     self.Score = 0
     self.Date = ""
+
+
+class TSavedGame():
+  def __init__(self):
+    self.score = ''
+    self.cardsPlayed = 0
+    self.Date = ''
 
 
 Deck = [None]
@@ -152,7 +160,7 @@ def SetAceHighLow():
 
 def SetSameScore():
   global CARD_SAME_ENDS
-  choice = input("Do you getting the same score to end the game?(Y/N): ").upper()
+  choice = input("Do you want getting the same card in a row to skip that guess?(Y/N): ").upper()
   if choice == "Y":
     CARD_SAME_ENDS = True
   elif choice == "N":
@@ -174,7 +182,8 @@ def LoadDeck(Deck):
     if ACE_HIGH == True and Deck[Count].Rank == 1:
       Deck[Count].Rank = 14
     Count = Count + 1
- 
+
+
 def ShuffleDeck(Deck):
   SwapSpace = TCard()
   NoOfSwaps = 1000
@@ -205,11 +214,18 @@ def GetCard(ThisCard, Deck, NoOfCardsTurnedOver):
   Deck[52 - NoOfCardsTurnedOver].Rank = 0
 
 
-def IsNextCardHigher(LastCard, NextCard):
+def IsNextCardHigher(LastCard, NextCard, Choice, Score):
+  global CARD_SAME_SKIP
   Higher = False
   if NextCard.Rank > LastCard.Rank:
     Higher = True
-  return Higher
+  elif NextCard.Rank == LastCard.Rank and CARD_SAME_SKIP == True and Choice == "h":
+    Higher = True
+    Score = Score - 1
+  elif NextCard.Rank == LastCard.Rank and CARD_SAME_SKIP == True and Choice == "l":
+    Higher = False
+    Score = Score - 1
+  return Higher, Score
 
 
 def GetPlayerName():
@@ -226,10 +242,15 @@ def GetPlayerName():
 
 
 def GetChoiceFromUser():
-  Choice = input('Do you think the next card will be higher than the last card (enter y or n)? ').lower()
+  Choice = input('Do you think the next card will be higher than the last card (enter h or l)? ').lower()
   Choice = Choice[0]
   print(Choice)
   return Choice
+
+
+def SaveGame(score, cardPlayed, cardsToBePlayed):
+  with open("savedgame.txt",mode="wb") as my_file:
+    pickle.dump(score,my_file)
 
 
 def DisplayEndOfGameMessage(Score):
@@ -242,8 +263,10 @@ def DisplayEndOfGameMessage(Score):
 
 
 def DisplayCorrectGuessMessage(Score):
+  global CARD_SAME_SKIP
   print()
-  print('Well done! You guessed correctly.')
+  if CARD_SAME_SKIP == True:
+    print('Well done! You guessed correctly.')
   print('Your score is now ', Score, '.', sep='')
   print()
 
@@ -307,6 +330,9 @@ def UpdateRecentScores(RecentScores, Score):
 
 
 def PlayGame(Deck, RecentScores):
+  global NO_OF_LIVES
+  noOfLives = NO_OF_LIVES
+  global CARD_NEXT_SKIP
   LastCard = TCard()
   NextCard = TCard()
   GameOver = False
@@ -316,17 +342,23 @@ def PlayGame(Deck, RecentScores):
   while (NoOfCardsTurnedOver < 52) and (not GameOver):
     GetCard(NextCard, Deck, NoOfCardsTurnedOver)
     Choice = ''
-    while (Choice != 'y') and (Choice != 'n'):
+    while (Choice != 'h') and (Choice != 'l'):
       Choice = GetChoiceFromUser()
     DisplayCard(NextCard)
     NoOfCardsTurnedOver = NoOfCardsTurnedOver + 1
-    Higher = IsNextCardHigher(LastCard, NextCard)
-    if (Higher and Choice == 'y') or (not Higher and Choice == 'n'):
+    Higher, NoOfCardsTurnedOver = IsNextCardHigher(LastCard, NextCard, Choice, NoOfCardsTurnedOver)
+    if (Higher and Choice == 'h') or (not Higher and Choice == 'l'):
       DisplayCorrectGuessMessage(NoOfCardsTurnedOver - 1)
       LastCard.Rank = NextCard.Rank
       LastCard.Suit = NextCard.Suit
     else:
-      GameOver = True
+      if noOfLives > 0:
+        if CARD_NEXT_SKIP:
+          noOfLives = noOfLives - 1
+          print("You were wrong! You have {0} lives remaining".format(NO_OF_LIVES+1))
+          NoOfCardsTurnedOver = NoOfCardsTurnedOver - 1
+      elif noOfLives == 0:
+        GameOver = True
   if GameOver:
     DisplayEndOfGameMessage(NoOfCardsTurnedOver - 2)
     UpdateRecentScores(RecentScores, NoOfCardsTurnedOver - 2)
@@ -351,7 +383,6 @@ if __name__ == '__main__':
       LoadDeck(Deck)
       PlayGame(Deck, RecentScores)
     elif Choice == '3':
-      print(RecentScores[1])
       DisplayRecentScores(RecentScores)
     elif Choice == '4':
       ResetRecentScores(RecentScores)
@@ -359,10 +390,6 @@ if __name__ == '__main__':
       DisplayOptions()
       OptionChoice = GetOptionChoice()
       SetOptions(OptionChoice)
-      if ACE_HIGH == True:
-        print("True")
-      elif ACE_HIGH == False:
-        print("False")
     elif Choice == "6":
        SaveScores(RecentScores)
     elif Choice == "7":
