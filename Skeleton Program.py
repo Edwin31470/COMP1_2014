@@ -139,7 +139,7 @@ def SetOptions(OptionChoice):
   if OptionChoice == "1":
     SetAceHighLow()
   elif OptionChoice == "2":
-    pass
+    SetSameScore()
   
 def SetAceHighLow():
   global ACE_HIGH
