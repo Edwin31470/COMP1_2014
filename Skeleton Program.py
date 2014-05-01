@@ -27,7 +27,7 @@ class TRecentScore():
   def __init__(self):
     self.Name = 'PlayerName'
     self.Score = 0
-    self.Date = None
+    self.Date = ""
 
 
 Deck = [None]
@@ -80,15 +80,17 @@ def GetSuit(SuitNo):
 
 
 def SaveScores(RecentScores):
-  #with open("save_scores.txt",mode="w",encoding="utf-8") as my_file:
-    file = open("save_scores.txt","w")
-    file.write(RecentScores)
+  with open("save_scores.txt",mode="wb") as my_file:
+    pickle.dump(RecentScores,my_file)
 
 
 def LoadScores():
   with open("save_scores.txt", mode="rb") as my_file:
-    TRecentScores = pickle.load(my_file)
-    print(TRecentScores)
+    try:
+      TRecentScores = pickle.load(my_file)
+    except IOError:
+      print("There is no file to load from.")
+    return TRecentScores
   
 def DisplayMenu():
   print()
@@ -354,4 +356,4 @@ if __name__ == '__main__':
     elif Choice == "6":
        SaveScores(RecentScores)
     elif Choice == "7":
-       LoadScores()
+       RecentScores = LoadScores()
