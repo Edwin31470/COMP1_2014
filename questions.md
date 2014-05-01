@@ -47,3 +47,13 @@
 1. GetPlayerName()
 2. DisplayMenu()
 3. GetRank()
+
+##Questions for task 10a
+1. The program will try to call an increased number of lines when there would not be any lines to call.
+
+##Questions for task 11
+1. In a global variable
+2. IsNextCardHigher() and PlayGame()
+3. Higher from IsNextCardHigher()
+4. DislayOptions(): add a new option
+   GetOptionChoice(): add a new option

@@ -13,8 +13,10 @@ import time
 import pdb
 import pickle
 
-NO_OF_RECENT_SCORES = 3
+
+NO_OF_RECENT_SCORES = 10
 ACE_HIGH = False
+CARD_SAME_ENDS = False
 
 
 class TCard():
@@ -25,7 +27,7 @@ class TCard():
 
 class TRecentScore():
   def __init__(self):
-    self.Name = 'PlayerName'
+    self.Name = ''
     self.Score = 0
     self.Date = ""
 
@@ -85,13 +87,15 @@ def SaveScores(RecentScores):
 
 
 def LoadScores():
-  with open("save_scores.txt", mode="rb") as my_file:
-    try:
-      TRecentScores = pickle.load(my_file)
-    except IOError:
-      print("There is no file to load from.")
-    return TRecentScores
-  
+  try:
+    with open("save_scores.txt", mode="rb") as my_file:
+      RecentScores = pickle.load(my_file)
+    return RecentScores
+  except IOError:
+    print("There is no file to load from.")
+    
+    
+
 def DisplayMenu():
   print()
   print('MAIN MENU')
@@ -112,7 +116,7 @@ def DisplayOptions():
   print("OPTIONS MENU")
   print()
   print("1. Ace value")
-  print("2. Placeholder")
+  print("2. Card of same score")
   print()
   print('Select an option from the menu (or enter q to quit): ', end='')
 
@@ -132,22 +136,28 @@ def GetOptionChoice():
 
 
 def SetOptions(OptionChoice):
-  global ACE_HIGH
   if OptionChoice == "1":
-    ACE_HIGH = SetAceHighLow()
+    SetAceHighLow()
   elif OptionChoice == "2":
     pass
   
 def SetAceHighLow():
   global ACE_HIGH
-  aceHL = input("Do you want ace to be high or low?(H/L): ").upper()
-  aceHigh = None
-  if aceHL == "H":
-    aceHigh = True
-  elif aceHL == "L":
-    aceHigh = False
-  return aceHigh
-  
+  choice = input("Do you want ace to be high or low?(H/L): ").upper()
+  if choice == "H":
+    ACE_HIGH = True
+  elif choice == "L":
+    ACE_HIGH = False
+
+
+def SetSameScore():
+  global CARD_SAME_ENDS
+  choice = input("Do you getting the same score to end the game?(Y/N): ").upper()
+  if choice == "Y":
+    CARD_SAME_ENDS = True
+  elif choice == "N":
+    CARD_SAME_ENDS = False 
+ 
 
 def LoadDeck(Deck):
   global ACE_HIGH
@@ -341,7 +351,7 @@ if __name__ == '__main__':
       LoadDeck(Deck)
       PlayGame(Deck, RecentScores)
     elif Choice == '3':
-      print(RecentScores[2].Score)
+      print(RecentScores[1])
       DisplayRecentScores(RecentScores)
     elif Choice == '4':
       ResetRecentScores(RecentScores)
@@ -357,3 +367,5 @@ if __name__ == '__main__':
        SaveScores(RecentScores)
     elif Choice == "7":
        RecentScores = LoadScores()
+
+
