@@ -87,22 +87,30 @@ def GetSuit(SuitNo):
   elif SuitNo == 4:
     Suit = 'Spades'
   return Suit
-
+    
 
 def SaveScores(RecentScores):
-  with open("save_scores.txt",mode="wb") as my_file:
-    pickle.dump(RecentScores,my_file)
+  with open("save_scores.txt", mode="w", encoding="utf-8")as savescores:
+    for count in range(1,len(RecentScores)):
+      savescores.write((RecentScores[count].Name) + "\n")
+      savescores.write(str(RecentScores[count].Score) + "\n")
+      savescores.write(str(RecentScores[count].Date) +"\n" )
 
-
+            
 def LoadScores():
+  RecentScores = [None]
   try:
-    with open("save_scores.txt", mode="rb") as my_file:
-      RecentScores = pickle.load(my_file)
+    with open("save_scores.txt", mode="r", encoding="utf-8") as my_file:
+      for count in range(1,NO_OF_RECENT_SCORES+1):
+        Score = TRecentScore()
+        Score.Name = my_file.readline().rstrip("\n")
+        Score.Score = my_file.readline().rstrip("\n")
+        Score.Date = my_file.readline().rstrip("\n")
+        RecentScores.append(Score)
     return RecentScores
   except IOError:
-    print("There is no file to load from.")
-    
-    
+    print("There is no file to load from.")  
+
 
 def DisplayMenu():
   print()
@@ -248,9 +256,13 @@ def GetChoiceFromUser():
   return Choice
 
 
-def SaveGame(score, cardPlayed, cardsToBePlayed):
-  with open("savedgame.txt",mode="wb") as my_file:
-    pickle.dump(score,my_file)
+def SaveGame(score,cardPlayed,cardsToBePlayed,Deck):
+  with open("deck.txt",mode="w",encoding="utf-8") as my_file:
+    for count in range(1,53):
+      my_file.write(Deck[count].Suit)
+      my_file.write("\n")
+      my_file.write(Deck[count].Rank)
+      my_file.write("\n")
 
 
 def DisplayEndOfGameMessage(Score):
@@ -263,9 +275,8 @@ def DisplayEndOfGameMessage(Score):
 
 
 def DisplayCorrectGuessMessage(Score):
-  global CARD_SAME_SKIP
   print()
-  if CARD_SAME_SKIP == True:
+  if CARD_SAME_SKIP == False:
     print('Well done! You guessed correctly.')
   print('Your score is now ', Score, '.', sep='')
   print()
@@ -332,7 +343,7 @@ def UpdateRecentScores(RecentScores, Score):
 def PlayGame(Deck, RecentScores):
   global NO_OF_LIVES
   noOfLives = NO_OF_LIVES
-  global CARD_NEXT_SKIP
+  global CARD_SAME_SKIP
   LastCard = TCard()
   NextCard = TCard()
   GameOver = False
@@ -342,7 +353,7 @@ def PlayGame(Deck, RecentScores):
   while (NoOfCardsTurnedOver < 52) and (not GameOver):
     GetCard(NextCard, Deck, NoOfCardsTurnedOver)
     Choice = ''
-    while (Choice != 'h') and (Choice != 'l'):
+    while (Choice != 'h') and (Choice != 'l') and (Choice != "s"):
       Choice = GetChoiceFromUser()
     DisplayCard(NextCard)
     NoOfCardsTurnedOver = NoOfCardsTurnedOver + 1
@@ -351,12 +362,14 @@ def PlayGame(Deck, RecentScores):
       DisplayCorrectGuessMessage(NoOfCardsTurnedOver - 1)
       LastCard.Rank = NextCard.Rank
       LastCard.Suit = NextCard.Suit
+    elif Choice == "s":
+      print(Deck)
+      SaveGame(NoOfCardsTurnedOver,LastCard,NextCard,Deck)
     else:
       if noOfLives > 0:
-        if CARD_NEXT_SKIP:
-          noOfLives = noOfLives - 1
-          print("You were wrong! You have {0} lives remaining".format(NO_OF_LIVES+1))
-          NoOfCardsTurnedOver = NoOfCardsTurnedOver - 1
+        noOfLives = noOfLives - 1
+        print("You were wrong! You have {0} lives remaining".format(NO_OF_LIVES+1))
+        NoOfCardsTurnedOver = NoOfCardsTurnedOver - 1
       elif noOfLives == 0:
         GameOver = True
   if GameOver:
@@ -391,8 +404,7 @@ if __name__ == '__main__':
       OptionChoice = GetOptionChoice()
       SetOptions(OptionChoice)
     elif Choice == "6":
-       SaveScores(RecentScores)
+      SaveScores(RecentScores)
     elif Choice == "7":
-       RecentScores = LoadScores()
-
+      RecentScores = LoadScores()
 
