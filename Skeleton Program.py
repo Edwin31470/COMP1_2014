@@ -14,7 +14,7 @@ import pdb
 import pickle
 
 
-NO_OF_RECENT_SCORES = 10
+NO_OF_RECENT_SCORES = 17
 ACE_HIGH = False
 CARD_SAME_SKIP = False
 NO_OF_LIVES = 3
@@ -94,19 +94,22 @@ def SaveScores(RecentScores):
     for count in range(1,len(RecentScores)):
       savescores.write((RecentScores[count].Name) + "\n")
       savescores.write(str(RecentScores[count].Score) + "\n")
-      savescores.write(str(RecentScores[count].Date) +"\n" )
+      savescores.write(str(RecentScores[count].Date) + "\n" )
 
             
 def LoadScores():
   RecentScores = [None]
   try:
     with open("save_scores.txt", mode="r", encoding="utf-8") as my_file:
-      for count in range(1,NO_OF_RECENT_SCORES+1):
-        Score = TRecentScore()
-        Score.Name = my_file.readline().rstrip("\n")
-        Score.Score = my_file.readline().rstrip("\n")
-        Score.Date = my_file.readline().rstrip("\n")
-        RecentScores.append(Score)
+      try:
+        for count in range(1,NO_OF_RECENT_SCORES+1):
+          Score = TRecentScore()
+          Score.Name = my_file.readline().rstrip("\n")
+          Score.Score = int(my_file.readline().rstrip("\n"))
+          Score.Date = my_file.readline().rstrip("\n")
+          RecentScores.append(Score)
+      except ValueError:
+        print("There was an error.")
     return RecentScores
   except IOError:
     print("There is no file to load from.")  
@@ -251,18 +254,22 @@ def GetPlayerName():
 
 def GetChoiceFromUser():
   Choice = input('Do you think the next card will be higher than the last card (enter h or l)? ').lower()
+  while Choice == "":
+    Choice = input("Invalid input. Do you think the next card will be higher than the last card (enter h or l)? ").lower()
   Choice = Choice[0]
   print(Choice)
   return Choice
 
 
-def SaveGame(score,cardPlayed,cardsToBePlayed,Deck):
-  with open("deck.txt",mode="w",encoding="utf-8") as my_file:
+def SaveDeck(Deck):
+  with open("deckCopy.txt",mode="w",encoding="utf-8") as my_file:
     for count in range(1,53):
-      my_file.write(Deck[count].Suit)
-      my_file.write("\n")
-      my_file.write(Deck[count].Rank)
-      my_file.write("\n")
+      my_file.write(str(Deck[count].Suit) + "\n")
+      my_file.write(str(Deck[count].Rank) + "\n")
+
+
+def SaveGame(NoOfCardsTurnedOver):
+  pass
 
 
 def DisplayEndOfGameMessage(Score):
@@ -341,9 +348,7 @@ def UpdateRecentScores(RecentScores, Score):
 
 
 def PlayGame(Deck, RecentScores):
-  global NO_OF_LIVES
   noOfLives = NO_OF_LIVES
-  global CARD_SAME_SKIP
   LastCard = TCard()
   NextCard = TCard()
   GameOver = False
@@ -390,10 +395,12 @@ if __name__ == '__main__':
     Choice = GetMenuChoice()
     if Choice == '1':
       LoadDeck(Deck)
+      SaveDeck(Deck)
       ShuffleDeck(Deck)
       PlayGame(Deck, RecentScores)
     elif Choice == '2':
       LoadDeck(Deck)
+      SaveDeck(Deck)
       PlayGame(Deck, RecentScores)
     elif Choice == '3':
       DisplayRecentScores(RecentScores)
