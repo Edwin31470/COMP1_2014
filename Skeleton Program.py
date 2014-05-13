@@ -261,15 +261,33 @@ def GetChoiceFromUser():
   return Choice
 
 
-def SaveDeck(Deck):
+def SaveGame(Deck, NoOfCardsTurnedOver, LastCard, NextCard):
   with open("deckCopy.txt",mode="w",encoding="utf-8") as my_file:
     for count in range(1,53):
       my_file.write(str(Deck[count].Suit) + "\n")
       my_file.write(str(Deck[count].Rank) + "\n")
+  with open("save_game.txt",mode="w",encoding="utf-8") as my_file:
+    my_file.write(str(NoOfCardsTurnedOver) + "\n")
+    my_file.write(str(LastCard.Suit) + "\n")
+    my_file.write(str(LastCard.Rank) + "\n")
+    my_file.write(str(NextCard.Suit) + "\n")
+    my_file.write(str(NextCard.Rank) + "\n")    
 
 
-def SaveGame(NoOfCardsTurnedOver):
-  pass
+def LoadGame(NoOfCardsTurnedOver):
+  Deck = [None]
+  Card = TCard()
+  with open("deckCopy.txt",mode="r",encoding="utf-8") as my_file:
+    for count in range(1,53):
+      Card.Suit = my_file.readline().rstrip("\n")
+      Card.Rank = my_file.readline().rstrip("\n")
+
+  with open("save_game.txt",mode="r",encoding="utf-8") as my_file:
+    my_file.write(str(NoOfCardsTurnedOver) + "\n")
+    my_file.write(str(LastCard.Suit) + "\n")
+    my_file.write(str(LastCard.Rank) + "\n")
+    my_file.write(str(NextCard.Suit) + "\n")
+    my_file.write(str(NextCard.Rank) + "\n")  
 
 
 def DisplayEndOfGameMessage(Score):
@@ -369,7 +387,8 @@ def PlayGame(Deck, RecentScores):
       LastCard.Suit = NextCard.Suit
     elif Choice == "s":
       print(Deck)
-      SaveGame(NoOfCardsTurnedOver,LastCard,NextCard,Deck)
+      SaveDeck(Deck, NoOfCardsTurnedOver, LastCard, NextCard)
+      SaveGame(NoOfCardsTurnedOver)
     else:
       if noOfLives > 0:
         noOfLives = noOfLives - 1
@@ -400,7 +419,6 @@ if __name__ == '__main__':
       PlayGame(Deck, RecentScores)
     elif Choice == '2':
       LoadDeck(Deck)
-      SaveDeck(Deck)
       PlayGame(Deck, RecentScores)
     elif Choice == '3':
       DisplayRecentScores(RecentScores)

@@ -58,7 +58,7 @@
 4. DislayOptions(): add a new option
    GetOptionChoice(): add a new option
    
- ##Questions for task 12a
- 1. Current score, card played, cards to be played
- 2. Binary as it needs multiple types of data.
- 3. PlayGame() and GetChoiceFromUser()
+##Questions for task 12a
+1. Current score, card played, cards to be played
+2. Binary as it needs multiple types of data.
+3. PlayGame() and GetChoiceFromUser()
