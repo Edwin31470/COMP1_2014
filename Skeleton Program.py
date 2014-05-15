@@ -14,7 +14,8 @@ import pdb
 import pickle
 
 
-NO_OF_RECENT_SCORES = 17
+NO_OF_RECENT_SCORES = 20
+
 ACE_HIGH = False
 CARD_SAME_SKIP = False
 NO_OF_LIVES = 3
@@ -193,6 +194,17 @@ def LoadDeck(Deck):
     if ACE_HIGH == True and Deck[Count].Rank == 1:
       Deck[Count].Rank = 14
     Count = Count + 1
+
+
+def CreateNewDeck():
+  Deck = [None]
+  for count1 in range(1,14):
+    for count2 in range(1,5):
+      card = TCard()
+      card.Rank = count1
+      card.Suit = count2
+      Deck.append(card)
+  return Deck
 
 
 def ShuffleDeck(Deck):
@@ -432,4 +444,6 @@ if __name__ == '__main__':
       SaveScores(RecentScores)
     elif Choice == "7":
       RecentScores = LoadScores()
+    elif Choice == "8":
+      CreateNewDeck()
 
